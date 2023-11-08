@@ -11,6 +11,10 @@ app.get('/register', (req,res) => {
     res.status(200).send("Welcome to registration page !");
 })
 
+app.post('/login', (req,res) => {
+    res.status(200).send("Welcome to login page !");
+})
+
 const PORT = 3000;
 app.listen(PORT, ()=>{
     log(`Server is running at PORT : ${PORT}`);
