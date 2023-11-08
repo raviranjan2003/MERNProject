@@ -3,17 +3,13 @@ const app = express();
 
 const { log } = require('ravi-first');
 
-app.get('/', (req,res) => {
-    res.status(200).send("Welcome to new Project !");
-})
+// app.get('/', (req,res) => {
+//     res.status(200).send("Welcome to new Project !");
+// })
 
-app.get('/register', (req,res) => {
-    res.status(200).send("Welcome to registration page !");
-})
+app.use('/', require("./routes"))
 
-app.post('/login', (req,res) => {
-    res.status(200).send("Welcome to login page !");
-})
+
 
 const PORT = 3000;
 app.listen(PORT, ()=>{
