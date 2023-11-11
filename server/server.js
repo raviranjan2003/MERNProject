@@ -3,10 +3,7 @@ const app = express();
 
 const { log } = require('ravi-first');
 
-// app.get('/', (req,res) => {
-//     res.status(200).send("Welcome to new Project !");
-// })
-
+app.use(express.json());
 app.use('/', require("./routes"))
 
 
