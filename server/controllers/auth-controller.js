@@ -1,6 +1,5 @@
 const User = require("../models/userModels");
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 const signUp = async (req,res) => {
     try {
@@ -44,10 +43,15 @@ const signUp = async (req,res) => {
             phone,
             password
         })
+        const jwtToken = await newUser.getToken();
         newUser.save()
         .then((response)=>{
-            console.log("Response===>",response);
-            res.status(200).send({newUser : response})
+            // console.log("Response===>",response);
+            res.status(201).send({
+                message : "Registration successful", 
+                jwtToken,
+                userId : newUser._id.toString()
+            })
         })
         .catch(err => {
             console.log("error===>",err);
