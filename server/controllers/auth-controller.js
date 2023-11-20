@@ -1,16 +1,16 @@
 const User = require("../models/userModels");
 const bcrypt = require('bcrypt');
 
-const signUp = async (req,res) => {
+const signUp = async (req, res) => {
     try {
         // console.log(req.body);
-        const { userName , email , phone , password } = req.body;
-        if(!email || !password){
+        const { userName, email, phone, password } = req.body;
+        if (!email || !password) {
             return res.send("Please fill the email and password !");
         }
-        const userExist = await User.findOne({ email : email });
+        const userExist = await User.findOne({ email: email });
         // console.log(userExist);
-        if(userExist){
+        if (userExist) {
             return res.send("User already exist !");
         }
 
@@ -45,35 +45,44 @@ const signUp = async (req,res) => {
         })
         const jwtToken = await newUser.getToken();
         newUser.save()
-        .then((response)=>{
-            // console.log("Response===>",response);
-            res.status(201).send({
-                message : "Registration successful", 
-                jwtToken,
-                userId : newUser._id.toString()
+            .then((response) => {
+                // console.log("Response===>",response);
+                res.status(201).send({
+                    message: "Registration successful",
+                    jwtToken,
+                    userId: newUser._id.toString()
+                })
             })
-        })
-        .catch(err => {
-            console.log("error===>",err);
-            res.status(400).send(err.message);
-        })
+            .catch(err => {
+                console.log("error===>", err);
+                res.status(400).send(err.message);
+            })
     } catch (error) {
         console.log("error ==> ", error);
         res.status(500).send("Internal Server Error !");
     }
 }
-const signIn = async (req,res) => {
+const signIn = async (req, res) => {
     // res.status(200).send("Welcome to login page ! --> POST");
-    const { email , password } = req.body;
-    const user = await User.findOne({ email });
-    if(!user){
-        return res.send("User not exist, Kindly signUp !");
-    }
-    bcrypt.compare(password, user.password, (err,result)=>{
-        if(!err){
-            res.send({ result });
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.send("Credentials not matched !");
         }
-    })
+        const passwordCorrect = await user.comparePassword(password);
+        if (passwordCorrect) {
+            res.status(201).send({ 
+                message : "User logged in successfully",
+                token : await user.getToken(),
+                userId : user._id.toString() 
+            });
+        }else{
+            res.status(401).send({message: "Credentials not matched !"});
+        }
+    } catch (error) {
+        res.status(500).send("Internal Server Error !");
+    }
 }
 
-module.exports = { signUp , signIn };
+module.exports = { signUp, signIn };

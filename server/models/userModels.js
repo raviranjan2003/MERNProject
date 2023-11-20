@@ -39,6 +39,10 @@ userSchema.pre('save',async function(next){
         next(error);
     }
 })
+//! creating instance method for comparing bcryp hash
+userSchema.methods.comparePassword = async function(password){
+    return bcrypt.compare(password,this.password);
+}
 
 //! generating JWT using mongoose instance method
 userSchema.methods.getToken = async function (){
